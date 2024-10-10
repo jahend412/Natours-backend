@@ -1,0 +1,14 @@
+{
+  "name": "natours-backend",
+  "version": "1.0.0",
+  "description": "Learning and enhancing my skills with  node, express, and mongoDB",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Josh Endemann / Jonas Schmedtmann",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}
