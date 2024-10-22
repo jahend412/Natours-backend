@@ -9,19 +9,10 @@ const app = express();
 
 // 1. Middleware
 app.use(morgan('dev'));
-
 app.use(express.json());
+app.use(express.static(`${__dirname}/public`));
 
-
-// 2. Route Handlers
-
-
-
-
-
-
-
-// 3. Routes
+// 2. Routes
 
     app.use('/api/v1/tours', tourRouter);
     app.use('/api/v1/users', userRouter);
