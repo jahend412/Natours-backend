@@ -33,7 +33,7 @@ const importData = async () => {
         console.log(err);
     } 
     process.exit();
-}
+};
 
 // Delete all data from collection
 
@@ -45,6 +45,13 @@ const deleteData = async () => {
         console.log(err);
     }
     process.exit();
-}
+};
 
-//  Left off at 6:50 in the video
+if (process.argv[2] === '--import') {
+    importData();
+} else if (process.argv[2] === '--delete') {
+    deleteData();
+};
+
+console.log(process.argv);
+// console.log(tours);
