@@ -4,6 +4,8 @@ const Tour = require('../models/tourModel');
 // Get all tours
 exports.getAllTours = async (req, res) => {
    try {
+    console.log(req.query);
+
     const tours = await Tour.find();
     
     res.status(200).json({
@@ -22,9 +24,9 @@ exports.getAllTours = async (req, res) => {
 }
 
 // Get one tour
-exports.getTour = (req, res) => {
+exports.getTour = async (req, res) => {
     try {
-    const tour = Tour.findById(req.params.id);
+    const tour = await Tour.findById(req.params.id);
     // Tour.findOne({ _id: req.params.id })
     res.status(200).json({
         status: 'success',
@@ -67,7 +69,7 @@ exports.createTour = async (req, res) => {
 // Update tour
 exports.updateTour = async (req, res) => {
     try {
-        const tour = Tour.findByIdAndUpdate (req.params.id, req.body, {
+        const tour = await Tour.findByIdAndUpdate (req.params.id, req.body, {
                 new: true,
                 runValidators: true
             });
