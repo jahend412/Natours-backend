@@ -5,12 +5,20 @@ const Tour = require('../models/tourModel');
 exports.getAllTours = async (req, res) => {
    try {
     // Build query
+    // 1) Filtering
     const queryObj = { ...req.query };  // destructuring the object
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach(el => delete queryObj[el]);
 
     const query = await Tour.find(queryObj);
 
+    // 2) Sorting
+    if (req.query.sort) {
+        const sortBy = req.query.sort.split(',').join(' ');
+        query = query.sort(sortBy);
+    } else {
+        query = query.sort('-createdAt');
+    }
     // const tours = await Tour.find()
     // .where('duration')
     // .equals(5)
