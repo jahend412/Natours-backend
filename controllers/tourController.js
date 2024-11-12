@@ -1,5 +1,12 @@
 const Tour = require('../models/tourModel');
 
+// Middleware
+exports.aliasTopTours = (req, res, next) => {
+    req.query.limit = '5';
+    req.query.sort = '-ratingsAverage,price';
+    req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
+    next();
+}
 
 // Get all tours
 exports.getAllTours = async (req, res) => {
@@ -43,7 +50,7 @@ exports.getAllTours = async (req, res) => {
     // Execute query
     const tours = await query;
     
-    
+
     // Send response
     res.status(200).json({
         status: 'success',
