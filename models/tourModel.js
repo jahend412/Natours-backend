@@ -6,6 +6,7 @@ const tourSchema = new mongoose.Schema({
         required: [true, 'A tour must have a name'],
         unique: true
     },
+    slug: String,   // This is a string that is used for SEO purposes
     rating: {
         type: Number,
         default: 4.5
@@ -42,13 +43,13 @@ const tourSchema = new mongoose.Schema({
 
 tourSchema.virtual('durationWeeks').get(function() {  // This is a real function, not an arrow function because we need the 'this' keyword
     return this.duration / 7;
-})
+});
 
+// DOCUMENT MIDDLEWARE: runs before .save() and .create()
 tourSchema.pre('save', function(next) {
-    console.log('Will save document...');
+    this.slug = slugify(this.name, { lower: true });
     next();
-    }
-);
+});
 
 
 const Tour = mongoose.model('Tour', tourSchema);
