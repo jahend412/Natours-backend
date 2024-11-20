@@ -61,10 +61,15 @@ tourSchema.pre(/^find/, function(next) {  // This is a regular expression that m
 
 tourSchema.post(/^find/, function(docs, next) {
     console.log(`Query took ${Date.now() - this.start} milliseconds`);
-    console.log(docs);
     next();
 });
 
+// AGGREGATION MIDDLEWARE
+tourSchema.pre('aggregate', function(next) {
+    this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });  // unshift() adds an element to the beginning of an array 
+    console.log(this.pipeline());
+    next();
+});
 
 
 
