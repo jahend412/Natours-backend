@@ -6,6 +6,7 @@
   "scripts": {
     "start": "nodemon server.js",
     "start:prod": "NODE_ENV=production nodemon server.js",
+    "debug": "nbd server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Josh Endemann / Jonas Schmedtmann",
