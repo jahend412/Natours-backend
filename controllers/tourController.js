@@ -1,6 +1,6 @@
-const e = require('express');
 const Tour = require('../models/tourModel');
-const APIFeatures = require('../utils/apiFeatures');
+const APIFeatures = require('../utils/apifeatures');
+
 
 // Middleware
 exports.aliasTopTours = (req, res, next) => {
@@ -170,21 +170,21 @@ exports.getMonthlyPlan = async (req, res) => {
 
         const plan = await Tour.aggregate([
             {
-                $unwind: '$startDates'
+                $unwind: '$startDates' //
             },
             {
                 $match: {
                     startDates: {
-                        $gte: new Date(`${year}-01-01`),
-                        $lte: new Date(`${year}-12-31`)
+                        $gte: new Date(`${year}-01-01`),  
+                        $lte: new Date(`${year}-12-31`)  
                     }
                 }
             },
             {
                 $group: {
-                    _id: { $month: '$startDates' },
-                    numTourStarts: { $sum: 1 },
-                    tours: { $push: '$name' }
+                    _id: { $month: '$startDates' }, // group by month
+                    numTourStarts: { $sum: 1 }, // sum 1 for each tour
+                    tours: { $push: '$name' } // push the name of the tours in an array
                 }
             },
             {
@@ -192,14 +192,14 @@ exports.getMonthlyPlan = async (req, res) => {
             },
             {
                 $project: {
-                _id: 0
+                _id: 0  // this is binary 0 to hide the id 1 to show the id
             }
         },
         {
-            $sort: { numTourStarts: -1 }
+            $sort: { numTourStarts: -1 }  // -1 for descending 1 for ascending
         },
         {
-            $limit: 12
+            $limit: 12  // limit to 12 results
         }
     ]);
         
