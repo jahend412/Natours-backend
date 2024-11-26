@@ -1,9 +1,13 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
-const { config } = require('dotenv');
+const AppError = require('../utils/appError');
 
-config({ path: './config.env' });
+const signToken = id => {
+    return jwt.sign({ id }, process.env.JWT_SECRET, {  // The token is signed with the user's id and the secret key
+        expiresIn: process.env.JWT_EXPIRES_IN  // The token expires in 90 days
+    });
+}
 
 
 exports.signup = catchAsync(async (req, res) => {
@@ -15,9 +19,7 @@ exports.signup = catchAsync(async (req, res) => {
     });
 
     // Create a token for the user and send it in the response body 
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {  // The token is signed with the user's id and the secret key
-        expiresIn: process.env.JWT_EXPIRES_IN  // The token expires in 90 days
-    });
+    const token = signToken(newUser._id); 
 
     res.status(201).json({
         status: 'success',
@@ -28,6 +30,26 @@ exports.signup = catchAsync(async (req, res) => {
     })
 });
 
-exports.login = catchAsync(async (req, res) => {
-     
+exports.login = catchAsync(async(req, res, next) => {
+     const { email, password } = req.body;
+
+     // 1) Check if email and password exist
+    if (!email || !password) {
+        return next(new AppError('Please provide email and password', 400));
+    }
+     // 2) Check if user exists && password is correct
+    const user = await User.findOne({ email }).select('+password');
+
+    if (!user || !(await user.correctPassword(password, user.password))) {
+        return next(new AppError('Incorrect email or password', 401));
+    }
+
+
+     // 3) If everything ok, send token to client
+    const token = signToken(user._id);
+    res.status(200).json({
+        status: 'success',
+        token, 
+    })
+
 });
