@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please provide a password'],
         minlength: 8,
+        select: false  // This hides the password 
     },
     passwordConfirm: {
         type: String,
@@ -36,15 +37,22 @@ const userSchema = new mongoose.Schema({
 
 // Document middleware: runs before .save() and .create()
 userSchema.pre('save', async function(next) {
+    
     // Only run this function if the password was actually modified
     if(!this.isModified('password')) return next();
+    
     // Hash the password with cost of 12
     this.password = await bcrypt.hash(this.password, 12);  // 12 is the cost parameter and a general value
+    
     // Delete the passwordConfirm field
     this.passwordConfirm = undefined;  // We don't want to persist the passwordConfirm in the database
     next();  // We need to call next() to move on to the next middleware
-})
+});
 
+
+userSchema.methods.correctPassword = async function(candidatePassword, userPassword) {
+    return await bcrypt.compare(candidatePassword, userPassword);
+}
 
 const User = mongoose.model('User', userSchema);
 
