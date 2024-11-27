@@ -10,6 +10,9 @@ router
     .post('/login', authController.login)
 
 router
+    .post('/resetPassword', authController.resetPassword)
+    .post('/forgotPassword/:token', authController.forgotPassword)
+router
     .route('/')
     .get(userController.getAllUsers)
     .post(userController.createUser);
