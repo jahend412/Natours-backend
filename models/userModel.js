@@ -58,6 +58,14 @@ userSchema.pre('save', async function(next) {
     next();  // We need to call next() to move on to the next middleware
 });
 
+// Document middleware: runs before .save() and .create()
+userSchema.pre('save', function(next) {
+    if(!this.isModified('password') || this.isNew) return next();
+    
+    this.passwordChangedAt = Date.now() - 1000;
+    next();
+});
+
 // Instance method: available on all documents of a collection
 userSchema.methods.correctPassword = async function(candidatePassword, userPassword) {
     return await bcrypt.compare(candidatePassword, userPassword);
