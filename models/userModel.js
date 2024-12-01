@@ -41,6 +41,11 @@ const userSchema = new mongoose.Schema({
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
+    active: {
+        type: Boolean,
+        default: true,
+        select: false // This hides the active field
+    }
 });
 
 
@@ -63,6 +68,13 @@ userSchema.pre('save', function(next) {
     if(!this.isModified('password') || this.isNew) return next();
     
     this.passwordChangedAt = Date.now() - 1000;
+    next();
+});
+
+// Query middleware
+userSchema.pre(/^find/, function(next) {  // /^find/ is a regular expression that means that it will run for all strings that start with find
+    // this points to the current query
+    this.find({ active: { $ne: false } });
     next();
 });
 
