@@ -12,6 +12,15 @@ const filterObj = (obj, ...allowedFields) => {
     return newObj;
 }
 
+exports.deleteMe = catchAsync(async(req, res, next) => {
+    await User.findByIdAndUpdate(req.user.id, { active: false });
+
+    res.status(204).json({
+        status: 'success',
+        data: null
+    })
+})
+
 // Get all users
 exports.getAllUsers = catchAsync(async(req, res, next) => {
     const users = await User.find();
