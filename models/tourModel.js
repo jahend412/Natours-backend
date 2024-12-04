@@ -9,25 +9,11 @@ const tourSchema = new mongoose.Schema(
       required: [true, 'A tour must have a name'],
       unique: true,
       trim: true,
-      maxlength: [40, 'A tour name must have less or equal than 40 characters'],
-      minlength: [10, 'A tour name must have more or equal than 10 characters'],
+      maxlength: [40, 'A tour name must have less or equal then 40 characters'],
+      minlength: [10, 'A tour name must have more or equal then 10 characters'],
       // validate: [validator.isAlpha, 'Tour name must only contain characters']
     },
-    slug: String, // This is a string that is used for SEO purposes
-    rating: {
-      type: Number,
-      default: 4.5,
-    },
-    ratingsQuantity: {
-      type: Number,
-      default: 0,
-    },
-    ratingsAverage: {
-      type: Number,
-      default: 4.5,
-      min: [1, 'Rating must be above 1.0'],
-      max: [5, 'Rating must be below 5.0'],
-    },
+    slug: String,
     duration: {
       type: Number,
       required: [true, 'A tour must have a duration'],
@@ -43,6 +29,16 @@ const tourSchema = new mongoose.Schema(
         values: ['easy', 'medium', 'difficult'],
         message: 'Difficulty is either: easy, medium, difficult',
       },
+    },
+    ratingsAverage: {
+      type: Number,
+      default: 4.5,
+      min: [1, 'Rating must be above 1.0'],
+      max: [5, 'Rating must be below 5.0'],
+    },
+    ratingsQuantity: {
+      type: Number,
+      default: 0,
     },
     price: {
       type: Number,
@@ -61,7 +57,7 @@ const tourSchema = new mongoose.Schema(
     summary: {
       type: String,
       trim: true,
-      required: [true, 'A tour must have a summary'],
+      required: [true, 'A tour must have a description'],
     },
     description: {
       type: String,
@@ -78,6 +74,10 @@ const tourSchema = new mongoose.Schema(
       select: false,
     },
     startDates: [Date],
+    secretTour: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -86,7 +86,6 @@ const tourSchema = new mongoose.Schema(
 );
 
 tourSchema.virtual('durationWeeks').get(function () {
-  // This is a real function, not an arrow function because we need the 'this' keyword
   return this.duration / 7;
 });
 
@@ -96,9 +95,19 @@ tourSchema.pre('save', function (next) {
   next();
 });
 
+// tourSchema.pre('save', function(next) {
+//   console.log('Will save document...');
+//   next();
+// });
+
+// tourSchema.post('save', function(doc, next) {
+//   console.log(doc);
+//   next();
+// });
+
 // QUERY MIDDLEWARE
+// tourSchema.pre('find', function(next) {
 tourSchema.pre(/^find/, function (next) {
-  // This is a regular expression that means that it will run for all the methods that start with 'find'
   this.find({ secretTour: { $ne: true } });
 
   this.start = Date.now();
@@ -106,13 +115,14 @@ tourSchema.pre(/^find/, function (next) {
 });
 
 tourSchema.post(/^find/, function (docs, next) {
-  console.log(`Query took ${Date.now() - this.start} milliseconds`);
+  console.log(`Query took ${Date.now() - this.start} milliseconds!`);
   next();
 });
 
 // AGGREGATION MIDDLEWARE
 tourSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } }); // unshift() adds an element to the beginning of an array
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+
   console.log(this.pipeline());
   next();
 });
