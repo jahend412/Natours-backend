@@ -115,9 +115,16 @@ const tourSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 );
-
+// virtual property to calculate the duration in weeks
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
+});
+
+// Virtual populate
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour', // The field in the Review model that refers to the current model (Tour model in this case)
+  localField: '_id', // The field in the current model that refers to the Review model (User model in this case)
 });
 
 // DOCUMENT MIDDLEWARE: runs before .save() and .create()
