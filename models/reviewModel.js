@@ -4,27 +4,26 @@ const reviewSchema = new mongoose.Schema(
   {
     review: {
       type: String,
-      required: [true, 'Review cannot be empty!'],
+      required: [true, 'Review can not be empty!'],
     },
     rating: {
       type: Number,
       min: 1,
       max: 5,
-      required: [true, 'Rating is required!'],
     },
     createdAt: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
+    },
+    tour: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Tour',
+      required: [true, 'Review must belong to a tour.'],
     },
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
       required: [true, 'Review must belong to a user'],
-    },
-    tour: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'Tour',
-      required: [true, 'Review must belong to a tour'],
     },
   },
   {
@@ -51,4 +50,8 @@ reviewSchema.pre(/^find/, function (next) {
 
 const Review = mongoose.model('Review', reviewSchema);
 
-module.exports = mongoose.model('Review', reviewSchema);
+module.exports = Review;
+
+// POST /api/v1/tours/241523/reviews
+// Get /tour/234252/reviews
+// Get /tour/234252/reviews/234234
