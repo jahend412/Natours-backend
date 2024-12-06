@@ -1,9 +1,12 @@
 const express = require('express');
 const tourController = require('./../controllers/tourController');
 const authController = require('./../controllers/authController');
-const reviewController = require('./../controllers/reviewController');
+const reviewRouter = require('./reviewRoutes');
 
 const router = express.Router();
+
+// Using this as a middleware to prevent duplicate code in two routers
+router.use('/:tourId/reviews', reviewRouter);
 
 // router.param('id', tourController.checkID);
 router
@@ -29,12 +32,12 @@ router
     tourController.deleteTour,
   );
 
-router
-  .route('/:tourId/reviews')
-  .post(
-    authController.protect,
-    authController.restrictTo('user'),
-    reviewController.createReview,
-  );
+// router
+//   .route('/:tourId/reviews')
+//   .post(
+//     authController.protect,
+//     authController.restrictTo('user'),
+//     reviewController.createReview,
+//   );
 
 module.exports = router;
