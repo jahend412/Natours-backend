@@ -12,14 +12,20 @@ router
   .post('/resetPassword', authController.resetPassword)
   .post('/forgotPassword/:token', authController.forgotPassword);
 
-router
-  .patch(
-    '/updateMyPassword',
-    authController.protect,
-    authController.updatePassword,
-  )
-  .patch('/updateMe', authController.protect, userController.updateMe)
-  .delete('/deleteMe', authController.protect, userController.deleteMe);
+router.patch(
+  '/updateMyPassword',
+  authController.protect,
+  authController.updatePassword,
+);
+
+router.get(
+  '/me',
+  authController.protect,
+  userController.getMe,
+  userController.getUser,
+);
+router.patch('/updateMe', authController.protect, userController.updateMe);
+router.delete('/deleteMe', authController.protect, userController.deleteMe);
 
 router
   .route('/')
